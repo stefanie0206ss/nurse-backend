@@ -33,13 +33,13 @@ app.use(session({
         dir: path.dirname(finalSessionsDbPath) 
     }),
     secret: 'your-secret-key-change-this-in-production',
-    resave: true,  // 改为 true
-    saveUninitialized: true,  // 改为 true
+    resave: true,
+    saveUninitialized: true,
     cookie: { 
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,  // 必须为 false（本地测试用）
-        sameSite: 'lax'  // 必须为 lax
+        secure: false,
+        sameSite: 'lax'
     }
 }));
 
@@ -109,7 +109,7 @@ function initDb() {
         const saltRounds = 10;
         const defaultPassword = bcrypt.hashSync('admin123', saltRounds);
         db.get(`SELECT COUNT(*) as count FROM users`, (err, row) => {
-            if (row.count === 0) {
+            if (row && row.count === 0) {
                 db.run(`INSERT INTO users (username, password, role) VALUES (?, ?, ?)`, 
                     ['super', defaultPassword, 'super']);
                 console.log('✅ 创建默认超级管理员 super / admin123');
@@ -118,7 +118,7 @@ function initDb() {
 
         // 插入默认设置（提前预约天数，默认7天）
         db.get(`SELECT COUNT(*) as count FROM settings WHERE key = 'max_advance_days'`, (err, row) => {
-            if (row.count === 0) {
+            if (row && row.count === 0) {
                 db.run(`INSERT INTO settings (key, value) VALUES ('max_advance_days', '7')`);
                 console.log('✅ 初始化默认设置：max_advance_days = 7');
             }
@@ -126,7 +126,7 @@ function initDb() {
 
         // 插入默认医生（示例）
         db.get(`SELECT COUNT(*) as count FROM doctors`, (err, row) => {
-            if (row.count === 0) {
+            if (row && row.count === 0) {
                 const stmt = db.prepare(`INSERT INTO doctors (name) VALUES (?)`);
                 stmt.run('张医生');
                 stmt.run('李医生');
@@ -140,7 +140,7 @@ function initDb() {
     });
 }
 
-// 健康检查
+// 健康检查（注意这个不在 /api 下）
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // 创建 API 路由组
