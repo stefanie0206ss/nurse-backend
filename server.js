@@ -427,7 +427,7 @@ apiRouter.delete('/appointments/:id', (req, res) => {
 });
 
 // 挂载 API 路由
-app.use('/api', apiRouter);
+app.use('/api', apiRouter); 
 
 // 启动服务器
 app.listen(PORT, () => {
