@@ -33,12 +33,13 @@ app.use(session({
         dir: path.dirname(finalSessionsDbPath) 
     }),
     secret: 'your-secret-key-change-this-in-production',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,  // 改为 true
+    saveUninitialized: true,  // 改为 true
     cookie: { 
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false // 生产环境如果使用 https 设为 true
+        secure: false,  // 必须为 false（本地测试用）
+        sameSite: 'lax'  // 必须为 lax
     }
 }));
 
